@@ -6,7 +6,6 @@ on:
       - 'raw_log.txt'
   workflow_dispatch:
 
-# We explicitly request minimal permissions needed ONLY for pages hosting
 permissions:
   pages: write
   id-token: write
@@ -15,19 +14,14 @@ jobs:
   render-and-host:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Shallow Checkout (Fastest Clone)
         uses: actions/checkout@v4
-
-      - name: Initialize Runtime Python Engine
-        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          fetch-depth: 1 # Only downloads the latest commit, skipping heavy history files
 
-      - name: Execute Compilation and Visualization Engine
-        run: python compile_data.py
-
-      - name: Configure Pages Environment
-        uses: actions/configure-pages@v5
+      # REMOVED setup-python: We bypass download overhead by calling the pre-installed system python environment directly
+      - name: Run Dashboard Generator
+        run: python3 compile_data.py
 
       - name: Upload Workspace Artifacts for Pages
         uses: actions/upload-pages-artifact@v3

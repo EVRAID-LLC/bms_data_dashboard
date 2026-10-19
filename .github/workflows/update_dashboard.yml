@@ -3,11 +3,11 @@ name: Generate Analytics Presentation Dashboard
 on:
   push:
     paths:
-      - 'raw_log.txt' # Triggers only when this log document changes or is overwritten
-  workflow_dispatch: # Allows manual UI refresh trigger if needed
+      - 'raw_log.txt'
+  workflow_dispatch:
 
+# We explicitly request minimal permissions needed ONLY for pages hosting
 permissions:
-  contents: write
   pages: write
   id-token: write
 
@@ -26,10 +26,13 @@ jobs:
       - name: Execute Compilation and Visualization Engine
         run: python compile_data.py
 
+      - name: Configure Pages Environment
+        uses: actions/configure-pages@v5
+
       - name: Upload Workspace Artifacts for Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.' # Serves generated index.html file directly to web pipeline
+          path: '.' 
 
       - name: Deploy Live Dashboard via GitHub Pages
         uses: actions/deploy-pages@v4

@@ -17,11 +17,18 @@ jobs:
       - name: Shallow Checkout (Fastest Clone)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1 # Only downloads the latest commit, skipping heavy history files
+          fetch-depth: 1
 
-      # REMOVED setup-python: We bypass download overhead by calling the pre-installed system python environment directly
+      - name: Initialize Python Runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Data Visualization Dependencies
+        run: pip install plotly
+
       - name: Run Dashboard Generator
-        run: python3 compile_data.py
+        run: python compile_data.py
 
       - name: Upload Workspace Artifacts for Pages
         uses: actions/upload-pages-artifact@v3

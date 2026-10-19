@@ -17,7 +17,7 @@ def process_logs():
     cells_regex = re.compile(r"cell:([\d,\s]+)")
 
     with open(log_file_path, 'r', encoding='utf-8') as file:
-        for line in f:
+        for line in file:
             if not line.strip():
                 continue
             
@@ -26,7 +26,7 @@ def process_logs():
             if len(parts) < 2:
                 continue
             
-            raw_message = parts[0].strip('"')
+            raw_message = parts[0].strip().strip('"')
             unix_ts_str = parts[1].strip()
 
             try:
@@ -64,7 +64,7 @@ def process_logs():
     for serial, metrics in fleet_data.items():
         # Sort items chronologically by log timestamp
         combined = list(zip(metrics["timestamps"], *[metrics[f"Cell {i+1}"] for i in range(10)]))
-        combined.sort(key=lambda x: x[0]) # sort by time
+        combined.sort(key=lambda x: x[0]) # sort chronologically by time string
         
         sorted_timestamps = [row[0] for row in combined]
         
@@ -102,6 +102,10 @@ def process_logs():
         charts_markup.append(card_html)
 
     # Read layout file framework
+    if not os.path.exists('templates/template.html'):
+        print("Error: templates/template.html not found.")
+        return
+
     with open('templates/template.html', 'r', encoding='utf-8') as file:
         template = file.read()
 

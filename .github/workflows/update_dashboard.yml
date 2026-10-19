@@ -1,0 +1,35 @@
+name: Generate Analytics Presentation Dashboard
+
+on:
+  push:
+    paths:
+      - 'raw_log.txt' # Triggers only when this log document changes or is overwritten
+  workflow_dispatch: # Allows manual UI refresh trigger if needed
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  render-and-host:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize Runtime Python Engine
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Execute Compilation and Visualization Engine
+        run: python compile_data.py
+
+      - name: Upload Workspace Artifacts for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Serves generated index.html file directly to web pipeline
+
+      - name: Deploy Live Dashboard via GitHub Pages
+        uses: actions/deploy-pages@v4
